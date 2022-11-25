@@ -1,23 +1,13 @@
 # coded by Divij Garg
 
-import random
-import copy
-import statistics
-import numpy as np
-import pprint
-from OneTrialSimulation import OneTrialSimulation
+from Simulation import Simulation
+import sys
 
-
-
-
-
+# sys.setrecursionlimit(10000)
 def main():
-    test = OneTrialSimulation(10, 10, 2, 2, 2, 2, 2)
-    test.createBoards()
-    test.createGamePieces()
-    test.placeGamePieces()
-    pprint.pprint(test.player1Defense)
-    pprint.pprint(test.player2Defense)
+    sim1=Simulation(1)
+    sim1.createSims()
+    sim1.runTrials()
 
 
 main()
