@@ -2,7 +2,7 @@ import random
 
 from GamePiece import GamePiece
 from Player import Player
-
+import pprint
 
 class OneTrialSimulation:
 
@@ -133,20 +133,113 @@ class OneTrialSimulation:
         return random.randint(lower, upper)
 
     # bulk of code: represents the game algorithm. Does it for a general player.
-    def doTurn(self, otherDefense, ownAttack):
-        xChosen = self.randInt(0, self.xDimen - 1)
-        yChosen = self.randInt(0, self.yDimen - 1)
-        while ownAttack[xChosen][yChosen] != 0:  # ensures the user hasn't chosen a space they've attacked before
+    def doTurn(self, attackingPlayer, defendingPlayer):
+        pprint.pprint(attackingPlayer.attackArray)
+        print(attackingPlayer.currentTarget)
+        if attackingPlayer.targetLength > 0:
+            if attackingPlayer.targetLength == len(attackingPlayer.currentTarget):
+                attackingPlayer.currentTarget = []
+                attackingPlayer.direction = 0
+                attackingPlayer.targetLength = 0
+
+        # code to find a new target
+        if attackingPlayer.targetLength == 0:
             xChosen = self.randInt(0, self.xDimen - 1)
             yChosen = self.randInt(0, self.yDimen - 1)
-
-        if otherDefense[xChosen][yChosen] == 0:
-            ownAttack[xChosen][yChosen] = -1
+            while attackingPlayer.attackArray[xChosen][
+                yChosen] != 0:  # ensures the user hasn't chosen a space they've attacked before
+                xChosen = self.randInt(0, self.xDimen - 1)
+                yChosen = self.randInt(0, self.yDimen - 1)
+            # print([xChosen,yChosen])
+            if defendingPlayer.defenseArray[xChosen][yChosen] == 0:
+                attackingPlayer.attackArray[xChosen][yChosen] = -1
+            else:
+                attackingPlayer.attackArray[xChosen][yChosen] = defendingPlayer.defenseArray[xChosen][
+                    yChosen].numPlacesOccupied
+                attackingPlayer.currentTarget.append([xChosen, yChosen])
+                attackingPlayer.targetLength = defendingPlayer.defenseArray[xChosen][yChosen].numPlacesOccupied
+                defendingPlayer.defenseArray[xChosen][yChosen].destroyCoord(xChosen, yChosen)
+                self.doTurn(attackingPlayer, defendingPlayer)
+        # code to attack a probable target
         else:
-            ownAttack[xChosen][yChosen] = otherDefense[xChosen][yChosen].numPlacesOccupied
-            otherDefense[xChosen][yChosen].destroyCoord(xChosen, yChosen)
-            currentTarget = [xChosen, yChosen]
-            self.doTurn(otherDefense, ownAttack)
+            # if it's the first time a target detected, then we need to find a direction to go in. Hence, this finds that direction
+            if len(attackingPlayer.currentTarget) == 1:
+                xChosen = attackingPlayer.currentTarget[0][0]
+                yChosen = attackingPlayer.currentTarget[0][1]
+                direction = self.randInt(1, 4)
+                xChange = 0
+                yChange = 0
+                if direction % 2 == 1:
+                    xChange = direction - 2
+                else:
+                    yChange = direction - 3
+                while not self.checkInGameBoard(xChosen + xChange, yChosen + yChange) or \
+                        attackingPlayer.attackArray[xChosen + xChange][
+                            yChosen + yChange] != 0:  # ensures the user hasn't chosen a space they've attacked before
+                    direction = self.randInt(1, 4)
+                    if direction % 2 == 1:
+                        xChange = direction - 2
+                    else:
+                        yChange = direction - 3
+                print(direction)
+                print(xChange)
+                print(yChange)
+                xChosen = xChosen + xChange
+                yChosen = yChosen + yChange
+                if defendingPlayer.defenseArray[xChosen][yChosen] == 0:
+                    attackingPlayer.attackArray[xChosen][yChosen] = -1
+                else:
+                    attackingPlayer.attackArray[xChosen][yChosen] = defendingPlayer.defenseArray[xChosen][
+                        yChosen].numPlacesOccupied
+                    attackingPlayer.targetDirection = direction
+                    attackingPlayer.setForwards()
+                    attackingPlayer.addNewAttacked([xChosen, yChosen])
+                    defendingPlayer.defenseArray[xChosen][yChosen].destroyCoord(xChosen, yChosen)
+                    self.doTurn(attackingPlayer, defendingPlayer)
+            # code to continue attacking target
+            else:
+                direction = attackingPlayer.targetDirection
+                attackedLength = len(attackingPlayer.currentTarget)
+                xChange = 0
+                yChange = 0
+                if direction % 2 == 1:
+                    xChange = direction - 2
+                else:
+                    yChange = direction - 3
+
+                if attackingPlayer.forwards:
+                    xChosen = attackingPlayer.currentTarget[attackedLength - 1][0] + xChange
+                    yChosen = attackingPlayer.currentTarget[attackedLength - 1][1] + yChange
+                else:
+                    xChosen = attackingPlayer.currentTarget[0][0] + xChange
+                    yChosen = attackingPlayer.currentTarget[0][1] + yChange
+
+                if not self.checkInGameBoard(xChosen, yChosen) or \
+                        attackingPlayer.attackArray[xChosen + xChange][
+                            yChosen + yChange] != 0:  # ensures the user hasn't chosen a space they've attacked before
+                    attackingPlayer.flipDirection()
+                    attackingPlayer.setForwards()
+                    direction = attackingPlayer.targetDirection
+                    if direction % 2 == 1:
+                        xChange = direction - 2
+                    else:
+                        yChange = direction - 3
+
+                    if attackingPlayer.forwards:
+                        xChosen = attackingPlayer.currentTarget[attackedLength - 1][0] + xChange
+                        yChosen = attackingPlayer.currentTarget[attackedLength - 1][1] + yChange
+                    else:
+                        xChosen = attackingPlayer.currentTarget[0][0] + xChange
+                        yChosen = attackingPlayer.currentTarget[0][1] + yChange
+
+                if defendingPlayer.defenseArray[xChosen][yChosen] == 0:
+                    attackingPlayer.attackArray[xChosen][yChosen] = -1
+                else:
+                    attackingPlayer.attackArray[xChosen][yChosen] = defendingPlayer.defenseArray[xChosen][
+                        yChosen].numPlacesOccupied
+                    attackingPlayer.addNewAttacked([xChosen, yChosen])
+                    defendingPlayer.defenseArray[xChosen][yChosen].destroyCoord(xChosen, yChosen)
+                    self.doTurn(attackingPlayer, defendingPlayer)
 
     def checkIfGameOver(self):
         counter1 = 0
