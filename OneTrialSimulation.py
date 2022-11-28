@@ -135,7 +135,9 @@ class OneTrialSimulation:
     # bulk of code: represents the game algorithm. Does it for a general player.
     def doTurn(self, attackingPlayer, defendingPlayer):
         pprint.pprint(attackingPlayer.attackArray)
+        print("direction: ", attackingPlayer.targetDirection)
         print(attackingPlayer.currentTarget)
+        print(attackingPlayer.forwards)
         if attackingPlayer.targetLength > 0:
             if attackingPlayer.targetLength == len(attackingPlayer.currentTarget):
                 attackingPlayer.currentTarget = []
@@ -150,7 +152,6 @@ class OneTrialSimulation:
                 yChosen] != 0:  # ensures the user hasn't chosen a space they've attacked before
                 xChosen = self.randInt(0, self.xDimen - 1)
                 yChosen = self.randInt(0, self.yDimen - 1)
-            # print([xChosen,yChosen])
             if defendingPlayer.defenseArray[xChosen][yChosen] == 0:
                 attackingPlayer.attackArray[xChosen][yChosen] = -1
             else:
@@ -177,13 +178,12 @@ class OneTrialSimulation:
                         attackingPlayer.attackArray[xChosen + xChange][
                             yChosen + yChange] != 0:  # ensures the user hasn't chosen a space they've attacked before
                     direction = self.randInt(1, 4)
+                    xChange = 0
+                    yChange = 0
                     if direction % 2 == 1:
                         xChange = direction - 2
                     else:
                         yChange = direction - 3
-                print(direction)
-                print(xChange)
-                print(yChange)
                 xChosen = xChosen + xChange
                 yChosen = yChosen + yChange
                 if defendingPlayer.defenseArray[xChosen][yChosen] == 0:
@@ -220,6 +220,8 @@ class OneTrialSimulation:
                     attackingPlayer.flipDirection()
                     attackingPlayer.setForwards()
                     direction = attackingPlayer.targetDirection
+                    xChange = 0
+                    yChange = 0
                     if direction % 2 == 1:
                         xChange = direction - 2
                     else:

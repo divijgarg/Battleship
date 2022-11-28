@@ -17,9 +17,5 @@ class Simulation:
             trial.createBoards()
             trial.createGamePieces()
             trial.placeGamePieces()
+            trial.doTurn(trial.player1, trial.player2)
 
-            trial.doTurn(trial.player1, trial.player2)
-            trial.doTurn(trial.player1, trial.player2)
-            trial.doTurn(trial.player1, trial.player2)
-            trial.doTurn(trial.player1, trial.player2)
-            trial.doTurn(trial.player1, trial.player2)
