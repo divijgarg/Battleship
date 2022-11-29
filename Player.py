@@ -16,9 +16,9 @@ class Player:
 
     def addNewAttacked(self,arr):
         if self.forwards:
-            self.currentTarget.append(arr)
+            self.currentTarget[0].append(arr)
         else:
-            self.currentTarget.insert(0,arr)
+            self.currentTarget[0].insert(0,arr)
 
     def flipDirection(self):
         if self.targetDirection==1 or self.targetDirection==2:

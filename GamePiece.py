@@ -22,8 +22,6 @@ class GamePiece:
             for i in range(0, self.numPlacesOccupied):
                 self.coordinates.append([startingX + i, startingY])
                 # gameBoard[startingX + i][startingY] = self.numPlacesOccupied
-        for i in range(0, self.numPlacesOccupied):
-            self.attackedCoordinates.append(False)
 
         # sets a position as destroyed
 
@@ -32,5 +30,8 @@ class GamePiece:
 
     # checks if the ship is completely destroyed
     def checkIfDestroyed(self):
-        if len(self.attackedCoordinates) == len(self.numPlacesOccupied):
+        if len(self.attackedCoordinates) == self.numPlacesOccupied:
             self.destroyed = True
+
+    def checkInCoordinates(self,arr):
+        return arr in self.coordinates
