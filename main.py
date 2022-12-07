@@ -5,9 +5,10 @@ import sys
 
 # sys.setrecursionlimit(10000)
 def main():
-    sim1=Simulation(1)
+    sim1=Simulation(1000)
     sim1.createSims()
     sim1.runTrials()
+    print("3")
 
 
 main()

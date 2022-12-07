@@ -3,7 +3,7 @@ class GamePiece:
     def __init__(self, numPlaces):
         self.coordinates = []
         self.attackedCoordinates = []
-        self.orientation = -2  # 0 is down, 1 is right
+        self.orientation = -2  # 0 is right, 1 is down
         self.destroyed = False
         self.numPlacesOccupied = numPlaces
 
@@ -13,6 +13,7 @@ class GamePiece:
         # stores the coordinates that the ship will occupy
 
     def setCoordinates(self, startingX, startingY, orient):
+        print(startingX, startingY)
         orientation = orient
         if orient == 0:
             for i in range(0, self.numPlacesOccupied):
@@ -30,8 +31,12 @@ class GamePiece:
 
     # checks if the ship is completely destroyed
     def checkIfDestroyed(self):
+        # print(self.attackedCoordinates)
         if len(self.attackedCoordinates) == self.numPlacesOccupied:
             self.destroyed = True
 
-    def checkInCoordinates(self,arr):
-        return arr in self.coordinates
+    def checkInCoordinates(self, arr):
+        for i in self.coordinates:
+            if arr[0] == i[0] and arr[1] == i[1]:
+                return True
+        return False

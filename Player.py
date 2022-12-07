@@ -1,3 +1,4 @@
+import numpy as np
 class Player:
     def __init__(self):
         self.defenseArray = []
@@ -25,3 +26,9 @@ class Player:
             self.targetDirection+=2
         else:
             self.targetDirection-=2
+
+    def determineDirection(self):
+        difference=np.subtract(self.currentTarget[0][0], self.currentTarget[0][1])
+        if difference[0]==1:
+            return 3
+        return 4
