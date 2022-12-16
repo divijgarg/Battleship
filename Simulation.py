@@ -16,12 +16,12 @@ class Simulation:
 
     def createSims(self):
         for i in range(0, self.numTrials):
-            self.trials.append(OneTrialSimulationNew(7, 7, 2, 0, 2, 2, 2))
+            self.trials.append(OneTrialSimulationNew(8, 8, 2, 2, 0, 2, 2))
 
     def runTrials(self):
         counter = 0
         for trial in self.trials:
-            if counter % 100 == 0: print(counter)
+            if counter % 10000 == 0: print(counter)
             counter += 1
             trial.createBoards()
             # print("counter")

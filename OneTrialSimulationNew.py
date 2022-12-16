@@ -103,39 +103,39 @@ class OneTrialSimulationNew:
         #     for x in piece.coordinates:
         #         self.player1.defenseArray[x[0]][x[1]] = piece
 
-        for piece in self.player2.pieces:
-            placed = False
-            startX = 0
-            startY = 0
-            orientation = -3
-            counter=0
-            while not placed and counter<100:
-                counter+=1
-                # print(111)
-                placed = True
-                orientation = self.randInt(0, 1)  # 0 represents down, 1 represents up
-                startX = self.randInt(0, self.xDimen - 1)
-                startY = self.randInt(0, self.yDimen - 1)
-                if orientation == 0:
-                    if self.checkInGameBoard(startX, startY + piece.returnLength() - 1):
-                        for i in range(startY, startY + piece.returnLength()):
-                            if self.player2.defenseArray[startX][i] != 0:
-                                placed = False
-                    else:
-                        placed = False
-
-                if orientation == 1:
-                    if self.checkInGameBoard(startX + piece.returnLength() - 1, startY):
-                        for i in range(startX, startX + piece.returnLength()):
-                            if not self.player2.defenseArray[i][startY] == 0:
-                                placed = False
-                    else:
-                        placed = False
-
-            piece.setCoordinates(startX, startY, orientation)
-            for x in piece.coordinates:
-                self.player2.defenseArray[x[0]][x[1]] = piece
-        # self.trialCases()
+        # for piece in self.player2.pieces:
+        #     placed = False
+        #     startX = 0
+        #     startY = 0
+        #     orientation = -3
+        #     counter=0
+        #     while not placed and counter<100:
+        #         counter+=1
+        #         # print(111)
+        #         placed = True
+        #         orientation = self.randInt(0, 1)  # 0 represents down, 1 represents up
+        #         startX = self.randInt(0, self.xDimen - 1)
+        #         startY = self.randInt(0, self.yDimen - 1)
+        #         if orientation == 0:
+        #             if self.checkInGameBoard(startX, startY + piece.returnLength() - 1):
+        #                 for i in range(startY, startY + piece.returnLength()):
+        #                     if self.player2.defenseArray[startX][i] != 0:
+        #                         placed = False
+        #             else:
+        #                 placed = False
+        #
+        #         if orientation == 1:
+        #             if self.checkInGameBoard(startX + piece.returnLength() - 1, startY):
+        #                 for i in range(startX, startX + piece.returnLength()):
+        #                     if not self.player2.defenseArray[i][startY] == 0:
+        #                         placed = False
+        #             else:
+        #                 placed = False
+        #
+        #     piece.setCoordinates(startX, startY, orientation)
+        #     for x in piece.coordinates:
+        #         self.player2.defenseArray[x[0]][x[1]] = piece
+        self.trialCases()
 
     # checks if a given location is inside the board or not
     def checkInGameBoard(self, i, j):
@@ -150,12 +150,13 @@ class OneTrialSimulationNew:
 
     # bulk of code: represents the game algorithm. Does it for a general player.
     def doTurn(self, attackingPlayer, defendingPlayer):
+        self.checkIfTargetsDestroyed(attackingPlayer, defendingPlayer)
+        self.drawGraph(attackingPlayer, defendingPlayer)
         # print("----------------------------------------------")
         # print(attackingPlayer.currentTarget)
         # pprint.pprint(attackingPlayer.attackArray)
         # print(attackingPlayer.targetDirection)
-        self.checkIfTargetsDestroyed(attackingPlayer, defendingPlayer)
-        self.drawGraph(attackingPlayer, defendingPlayer)
+
         if not self.checkIfGameOver():
             if len(attackingPlayer.currentTarget) == 0:
                 self.doTurnRandomly(attackingPlayer, defendingPlayer)
@@ -189,6 +190,7 @@ class OneTrialSimulationNew:
         targetsCopy = targets.copy()
         xChosen = targetsCopy[0][0][0]
         yChosen = targetsCopy[0][0][1]
+
         while self.checkIfLandLocked(attackingPlayer, xChosen, yChosen):
             if len(targetsCopy[0]) > 1:
                 targetsCopy[0].pop(0)
@@ -256,14 +258,14 @@ class OneTrialSimulationNew:
                 attackingPlayer.targetDirection = attackingPlayer.determineDirection()
                 attackingPlayer.setForwards()
             else:
-                attackingPlayer.targetDirection=self.randInt(1,4)
+                attackingPlayer.targetDirection = self.randInt(1, 4)
                 attackingPlayer.setForwards()
 
         points = self.complexTurnBrokenDown(attackingPlayer)
         xChosen = points[0]
         yChosen = points[1]
 
-        if not self.checkInGameBoard(xChosen,yChosen) or attackArray[xChosen][yChosen] != 0:
+        if not self.checkInGameBoard(xChosen, yChosen) or attackArray[xChosen][yChosen] != 0:
             if direction == 1 or direction == 3:
                 attackingPlayer.targetDirection += 1
             elif direction == 2 or direction == 4:
@@ -375,7 +377,9 @@ class OneTrialSimulationNew:
         for piece in defendingPlayer.pieces:
             piece.checkIfDestroyed()
             if piece.destroyed:
-                changed = self.removeCoordsFromTarget(attackingPlayer, piece)
+                results = self.removeCoordsFromTarget(attackingPlayer, piece)
+                if not changed:
+                    changed = results
 
         if changed and len(targets) > 0:
             attackingPlayer.targetLength = targets[0][0][2]
@@ -396,7 +400,7 @@ class OneTrialSimulationNew:
 
     def removeCoordsFromTarget(self, attackingPlayer, piece):
         targets = attackingPlayer.currentTarget
-        changesOccured = False
+        changesOccurred = False
         for target in targets:
             for i in reversed(range(0, len(target))):
                 xTarget = target[i][0]
@@ -404,15 +408,14 @@ class OneTrialSimulationNew:
                 for coords in piece.coordinates:
                     if xTarget == coords[0] and yTarget == coords[1]:
                         target.pop(i)
-                        attackingPlayer.targetLength = 0
                         attackingPlayer.targetDirection = 0
-                        changesOccured = True
+                        changesOccurred = True
 
         for i in reversed(range(0, len(targets))):
             if len(targets[i]) == 0:
                 targets.pop(i)
 
-        return changesOccured
+        return changesOccurred
 
     def drawGraph(self, player1, player2):
 
@@ -420,4 +423,4 @@ class OneTrialSimulationNew:
         pyplot.clf()
         pyplot.imshow(player1.attackArray, cmap='hot', interpolation='nearest')
         pyplot.colorbar()
-        pyplot.pause(0.001)
+        pyplot.pause(0.5)
