@@ -24,7 +24,7 @@ class Player:
     def flipDirection(self):
         if self.targetDirection==1 or self.targetDirection==2:
             self.targetDirection+=2
-        else:
+        elif self.targetDirection==3 or self.targetDirection==4:
             self.targetDirection-=2
 
     def determineDirection(self):

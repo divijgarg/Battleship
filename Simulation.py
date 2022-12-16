@@ -7,6 +7,7 @@ import numpy as np
 
 from matplotlib import pyplot
 
+
 class Simulation:
 
     def __init__(self, numTrials):
@@ -15,15 +16,16 @@ class Simulation:
 
     def createSims(self):
         for i in range(0, self.numTrials):
-            self.trials.append(OneTrialSimulationNew(8, 8, 2, 0, 2, 2, 2))
+            self.trials.append(OneTrialSimulationNew(7, 7, 2, 0, 2, 2, 2))
 
     def runTrials(self):
-        counter=0
+        counter = 0
         for trial in self.trials:
-            counter+=1
+            if counter % 100 == 0: print(counter)
+            counter += 1
             trial.createBoards()
-            print("counter")
-            print(counter)
+            # print("counter")
+            # print(counter)
             trial.createGamePieces()
             trial.placeGamePieces()
             # for i in range(0,50):
@@ -33,4 +35,3 @@ class Simulation:
                 # trial.doTurn(trial.player2, trial.player1)
 
     # def drawGraph(self,player):
-

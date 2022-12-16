@@ -13,7 +13,7 @@ class GamePiece:
         # stores the coordinates that the ship will occupy
 
     def setCoordinates(self, startingX, startingY, orient):
-        print(startingX, startingY)
+        # print(startingX, startingY)
         orientation = orient
         if orient == 0:
             for i in range(0, self.numPlacesOccupied):
