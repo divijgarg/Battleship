@@ -92,20 +92,23 @@ class Simulation:
         player1MoveSequences = []
         player1DestructionOrders = []
         for i in self.trials:
-            p1 = i.player1
-            numberMovesPlayer1.append(p1.numberOfMoves)
-            successfulAttacksPlayer1.append(p1.recordOfAttacks.count(True))
-            failedAttacksPlayer1.append(p1.recordOfAttacks.count(False))
-            totalAttacksPlayer1.append(len(p1.recordOfAttacks))
+            if i.winner == 1:
+                p1 = i.player1
+                numberMovesPlayer1.append(p1.numberOfMoves)
+                successfulAttacksPlayer1.append(p1.recordOfAttacks.count(True))
+                failedAttacksPlayer1.append(p1.recordOfAttacks.count(False))
+                totalAttacksPlayer1.append(len(p1.recordOfAttacks))
 
-            player1AttackSequences.append(p1.recordOfAttacks)
-            player1MoveSequences.append(p1.recordOfMoves)
-            player1DestructionOrders.append(p1.orderOfDestruction)
+                player1AttackSequences.append(p1.recordOfAttacks)
+                player1MoveSequences.append(p1.recordOfMoves)
+                player1DestructionOrders.append(p1.orderOfDestruction)
 
-        self.statsOnDestructionPattern(numberMovesPlayer1, player1DestructionOrders)
-        self.statsOnProbabilities(numberMovesPlayer1, player1AttackSequences, player1MoveSequences)
-        self.statsOnAttacks(successfulAttacksPlayer1, failedAttacksPlayer1, totalAttacksPlayer1, numberMovesPlayer1)
-        self.longestAttackSequence(player1AttackSequences, numberMovesPlayer1)
+        print(len(numberMovesPlayer1))
+
+        # self.statsOnDestructionPattern(numberMovesPlayer1, player1DestructionOrders)
+        # self.statsOnProbabilities(numberMovesPlayer1, player1AttackSequences, player1MoveSequences)
+        # self.statsOnAttacks(successfulAttacksPlayer1, failedAttacksPlayer1, totalAttacksPlayer1, numberMovesPlayer1)
+        # self.longestAttackSequence(player1AttackSequences, numberMovesPlayer1)
 
     def statsOnDestructionPattern(self, numberMoves, destruction):
         firstsCounts = [0, 0, 0, 0]
@@ -115,7 +118,7 @@ class Simulation:
         firsts = []
         lasts = []
         for i in range(0, len(destruction)):
-            if len(destruction[i])>0 and destruction[i][0] - 2 >= 0:
+            if len(destruction[i]) > 0 and destruction[i][0] - 2 >= 0:
                 firstsCounts[destruction[i][0] - 2] += 1
                 lastsCounts[destruction[i][len(destruction[i]) - 1] - 2] += 1
 
